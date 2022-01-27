@@ -3,12 +3,14 @@ import Foundation
 public struct RequestJSON {
     let data: Data?
     
-    init<E: Encodable>(encodable: E) {
+    public init<E: Encodable>(encodable: E) {
         let jsonEncoder = JSONEncoder()
         self.data = try? jsonEncoder.encode(encodable)
     }
     
-    init(jsonObject: Any, prettyPrinted: Bool = true) {
+    public init(jsonObject: Any,
+                prettyPrinted: Bool = true) {
+        
         var options: JSONSerialization.WritingOptions = []
         
         if prettyPrinted {
