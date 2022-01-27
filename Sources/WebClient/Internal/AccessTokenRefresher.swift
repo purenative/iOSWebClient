@@ -22,7 +22,10 @@ actor AccessTokenRefresher {
     
     func refreshToken(for webClient: WebClient) async -> Bool {
         self.refreshing = true
-        let providingResult = await self.accessTokenProvider.provideToken(for: webClient)
+        
+        let refreshToken = accessTokenStorage.getToken(byType: .refresh)
+        let providingResult = await self.accessTokenProvider.provideToken(for: webClient,
+                                                                          refreshToken: refreshToken)
 
         let success: Bool
         

@@ -1,5 +1,6 @@
 public protocol AccessTokenProvider {
     
-    func provideToken(for webClient: WebClient) async -> AccessTokenProviderResult
+    func provideToken(for webClient: WebClient,
+                      refreshToken: String?) async -> AccessTokenProviderResult
     
 }
