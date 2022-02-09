@@ -121,7 +121,14 @@ private extension WebClient {
         switch interceptionResult {
         case .retryAfterAuthorizationTokenUpdates:
             if let accessTokenRefresher = self.accessTokenRefresher {
-                await accessTokenRefresher.waitEndOfRefresh()
+                if accessTokenRefresher.refreshing {
+                    await accessTokenRefresher.waitEndOfRefresh()
+                } else {
+                    let success = await accessTokenRefresher.refreshToken(for: self)
+                    if !success {
+                        return response
+                    }
+                }
                 return try await self.request(with: requestParameters)
             }
             
