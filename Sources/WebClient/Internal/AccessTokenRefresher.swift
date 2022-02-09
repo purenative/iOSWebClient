@@ -49,7 +49,9 @@ actor AccessTokenRefresher {
     func waitEndOfRefresh() async {
         if refreshing {
             return await withCheckedContinuation { continuation in
-                continuation.resume(returning: ())
+                waitEndOfRefresh {
+                    continuation.resume(returning: ())
+                }
             }
         }
     }

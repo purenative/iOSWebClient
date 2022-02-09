@@ -13,7 +13,7 @@ class RequestAuthorizer {
         
         if let accessToken = storage.getToken(byType: .access) {
             for method in authorizationMethods {
-                request.addValue(method.preparedValue(using: accessToken),
+                request.setValue(method.preparedValue(using: accessToken),
                                  forHTTPHeaderField: method.preparedHeader())
             }
         }
