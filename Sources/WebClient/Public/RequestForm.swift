@@ -4,6 +4,8 @@ public class RequestForm {
     
     private var values = [RequestFormValue]()
     
+    public init() { }
+    
 }
 
 extension RequestForm {
