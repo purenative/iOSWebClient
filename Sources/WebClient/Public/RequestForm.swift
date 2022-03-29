@@ -12,7 +12,7 @@ extension RequestForm {
         self.values.append(value)
     }
     
-    public appending(_ value: RequestFormValue) -> RequestForm {
+    public func appending(_ value: RequestFormValue) -> RequestForm {
         self.values.append(value)
         return self
     }
