@@ -8,8 +8,13 @@ public class RequestForm {
 
 extension RequestForm {
     
-    func append(_ value: RequestFormValue) {
+    public func append(_ value: RequestFormValue) {
         self.values.append(value)
+    }
+    
+    public appending(_ value: RequestFormValue) -> RequestForm {
+        self.values.append(value)
+        return self
     }
     
     func asMultipartFormBodyData(boundary: Boundary) -> Data? {
