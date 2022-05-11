@@ -2,7 +2,7 @@ import Foundation
 
 public struct RequestResponse {
     
-    public let taskResponse: TaskResponse?
+    let taskResponse: TaskResponse?
     public let response: HTTPURLResponse?
     public let error: Error?
     
