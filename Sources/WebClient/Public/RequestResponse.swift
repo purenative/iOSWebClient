@@ -2,9 +2,9 @@ import Foundation
 
 public struct RequestResponse {
     
-    let taskResponse: TaskResponse?
-    let response: HTTPURLResponse?
-    let error: Error?
+    public let taskResponse: TaskResponse?
+    public let response: HTTPURLResponse?
+    public let error: Error?
     
     init(taskResponse: TaskResponse?,
          response: URLResponse?,
