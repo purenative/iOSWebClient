@@ -32,7 +32,7 @@ extension RequestFormValue {
 
         let dataBuilder = DataBuilder()
         
-        dataBuilder.append(string: "Content-Disposition: form-data; name=\(self.name)")
+        dataBuilder.append(string: "Content-Disposition: form-data; name=\"\(self.name)\"")
         
         switch self.valueType {
         case .bool, .int, .float, .double, .string:
@@ -61,7 +61,7 @@ extension RequestFormValue {
         case let .image(image, fileName):
             if let pngImageData = image.pngData() {
                 dataBuilder.append(string: " filename=\"\(fileName)\"\(newLine)")
-                dataBuilder.append(string: "Content-Type: \(ContentType.applicationOctetStream.rawValue)\(endLine)")
+                dataBuilder.append(string: "Content-Type: \(ContentType.imagePng.rawValue)\(endLine)")
                 dataBuilder.append(data: pngImageData)
             } else {
                 return nil
