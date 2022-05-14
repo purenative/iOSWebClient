@@ -10,7 +10,7 @@ struct Boundary {
     }
     
     func forContentTypeHeader() -> String {
-        "--\(base)\(endLine)"
+        "--\(base)"
     }
     
     func forParameter() -> String {

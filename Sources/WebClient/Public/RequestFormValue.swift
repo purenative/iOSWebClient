@@ -37,13 +37,13 @@ extension RequestFormValue {
         switch self.valueType {
         case .bool, .int, .float, .double, .string:
             dataBuilder.append(string: newLine)
-            dataBuilder.append(string: "Content-Type: \(ContentType.textPlain)\(endLine)")
+            dataBuilder.append(string: "Content-Type: \(ContentType.textPlain.rawValue)\(endLine)")
             dataBuilder.append(string: self.valueType.stringValue)
             dataBuilder.append(string: newLine)
             
         case let .json(json):
             dataBuilder.append(string: newLine)
-            dataBuilder.append(string: "Content-Type: \(ContentType.applicationJson)\(endLine)")
+            dataBuilder.append(string: "Content-Type: \(ContentType.applicationJson.rawValue)\(endLine)")
             dataBuilder.append(string: json.stringValue)
             dataBuilder.append(string: newLine)
             
@@ -52,7 +52,7 @@ extension RequestFormValue {
                 let fileName = url.lastPathComponent
 
                 dataBuilder.append(string: " filename=\"\(fileName)\"\(newLine)")
-                dataBuilder.append(string: "Content-Type: \(ContentType.applicationOctetStream)\(endLine)")
+                dataBuilder.append(string: "Content-Type: \(ContentType.applicationOctetStream.rawValue)\(endLine)")
                 dataBuilder.append(data: fileData)
             } else {
                 return nil
@@ -61,7 +61,7 @@ extension RequestFormValue {
         case let .image(image, fileName):
             if let pngImageData = image.pngData() {
                 dataBuilder.append(string: " filename=\"\(fileName)\"\(newLine)")
-                dataBuilder.append(string: "Content-Type: \(ContentType.applicationOctetStream)\(endLine)")
+                dataBuilder.append(string: "Content-Type: \(ContentType.applicationOctetStream.rawValue)\(endLine)")
                 dataBuilder.append(data: pngImageData)
             } else {
                 return nil
