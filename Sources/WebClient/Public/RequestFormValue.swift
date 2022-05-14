@@ -37,7 +37,6 @@ extension RequestFormValue {
         switch self.valueType {
         case .bool, .int, .float, .double, .string:
             dataBuilder.append(string: newLine)
-            dataBuilder.append(string: "Content-Type: \(ContentType.textPlain.rawValue)\(endLine)")
             dataBuilder.append(string: self.valueType.stringValue)
             dataBuilder.append(string: newLine)
             
