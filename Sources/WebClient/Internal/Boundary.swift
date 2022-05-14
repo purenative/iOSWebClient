@@ -1,6 +1,6 @@
 struct Boundary {
     
-    private let endLine = "\r\n"
+    private let newLine = "\n"
     
     let base: String
     
@@ -14,11 +14,11 @@ struct Boundary {
     }
     
     func forParameter() -> String {
-        "\(endLine)--\(base)\(endLine)"
+        "--\(base)\(newLine)"
     }
     
     func forClosing() -> String {
-        "\(endLine)--\(base)--\(endLine)"
+        "--\(base)--\(newLine)"
     }
     
 }
