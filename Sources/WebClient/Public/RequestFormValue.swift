@@ -27,7 +27,6 @@ extension RequestFormValue {
     }
     
     var multipartData: Data? {
-        let newLine = "\n"
         let endLine = "\r\n"
 
         let dataBuilder = DataBuilder()
@@ -36,32 +35,34 @@ extension RequestFormValue {
         
         switch self.valueType {
         case .bool, .int, .float, .double, .string:
-            dataBuilder.append(string: endLine)
+            dataBuilder.append(string: endLine + endLine)
             dataBuilder.append(string: self.valueType.stringValue)
-            dataBuilder.append(string: newLine)
+            dataBuilder.append(string: endLine)
             
         case let .json(json):
-            dataBuilder.append(string: newLine)
-            dataBuilder.append(string: "Content-Type: \(ContentType.applicationJson.rawValue)\(endLine)")
+            dataBuilder.append(string: endLine)
+            dataBuilder.append(string: "Content-Type: \(ContentType.applicationJson.rawValue)\(endLine + endLine)")
             dataBuilder.append(string: json.stringValue)
-            dataBuilder.append(string: newLine)
-            
+            dataBuilder.append(string: endLine)
+
         case let .file(url):
             if let fileData = try? Data(contentsOf: url) {
                 let fileName = url.lastPathComponent
 
-                dataBuilder.append(string: " filename=\"\(fileName)\"\(newLine)")
-                dataBuilder.append(string: "Content-Type: \(ContentType.applicationOctetStream.rawValue)\(endLine)")
+                dataBuilder.append(string: "; filename=\"\(fileName)\"\(endLine)")
+                dataBuilder.append(string: "Content-Type: \(ContentType.applicationOctetStream.rawValue)\(endLine + endLine)")
                 dataBuilder.append(data: fileData)
+                dataBuilder.append(string: endLine)
             } else {
                 return nil
             }
             
         case let .image(image, fileName):
             if let pngImageData = image.pngData() {
-                dataBuilder.append(string: " filename=\"\(fileName)\"\(newLine)")
-                dataBuilder.append(string: "Content-Type: \(ContentType.imagePng.rawValue)\(endLine)")
+                dataBuilder.append(string: "; filename=\"\(fileName)\"\(endLine)")
+                dataBuilder.append(string: "Content-Type: \(ContentType.imagePng.rawValue)\(endLine + endLine)")
                 dataBuilder.append(data: pngImageData)
+                dataBuilder.append(string: endLine)
             } else {
                 return nil
             }

@@ -1,6 +1,6 @@
 struct Boundary {
     
-    private let newLine = "\n"
+    private let endLine = "\r\n"
     
     let base: String
     
@@ -10,15 +10,15 @@ struct Boundary {
     }
     
     func forContentTypeHeader() -> String {
-        "--\(base)"
+        "\(base)"
     }
     
     func forParameter() -> String {
-        "--\(base)\(newLine)"
+        "--\(base)\(endLine)"
     }
-    
+
     func forClosing() -> String {
-        "--\(base)--\(newLine)"
+        "--\(base)--\(endLine)"
     }
     
 }

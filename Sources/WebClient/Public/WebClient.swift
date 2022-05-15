@@ -174,11 +174,19 @@ private extension WebClient {
         
         if body.isMultipartForm {
             let boundary = Boundary()
-            request.httpBody = body.asBodyData(boundary: boundary)
             
-            let contentTypeHeaderValue = "\(ContentType.multipartFormData.rawValue); boundary=\(boundary.forContentTypeHeader())"
-            contentTypeHeader = RequestHeader(name: "Content-Type",
-                                              value: contentTypeHeaderValue)
+            if let bodyData = body.asBodyData(boundary: boundary) {
+                request.httpBody = bodyData
+
+                let contentTypeHeaderValue = "\(ContentType.multipartFormData.rawValue); boundary=\(boundary.forContentTypeHeader())"
+                contentTypeHeader = RequestHeader(name: "Content-Type",
+                                                  value: contentTypeHeaderValue)
+
+                request.setValue("\((bodyData as NSData).length)",
+                                 forHTTPHeaderField: "Content-Length")
+            } else {
+                contentTypeHeader = nil
+            }
         } else {
             request.httpBody = body.asBodyData()
             
