@@ -2,12 +2,12 @@ import Foundation
 
 public struct RequestParameters {
     
-    let baseURL: URL
-    let method: HTTPMethod
-    let body: RequestBody
-    let queryItems: [URLQueryItem]
-    let additionalHeaders: [RequestHeader]
-    let requestProgress: RequestProgress?
+    public let baseURL: URL
+    public let method: HTTPMethod
+    public let body: RequestBody
+    public let queryItems: [URLQueryItem]
+    public let additionalHeaders: [RequestHeader]
+    public let requestProgress: RequestProgress?
     
     public init(baseURL: URL,
                 method: HTTPMethod = .get,
