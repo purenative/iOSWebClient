@@ -13,6 +13,8 @@ public class RequestProgress: ObservableObject {
     @Published
     public var progress: Double = 0
     
+    public init() { }
+    
     deinit {
         cancellables.forEach {
             $0.cancel()
