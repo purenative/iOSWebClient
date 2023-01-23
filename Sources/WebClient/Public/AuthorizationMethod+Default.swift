@@ -19,7 +19,7 @@ open class TokenBasedAuthorizationMethod: AuthorizationMethod {
 final public class TokenAuthorizationMethod: TokenBasedAuthorizationMethod {
     
     public init() {
-        super.init(format: "Token %s")
+        super.init(format: "Token %@")
     }
     
 }
@@ -27,7 +27,7 @@ final public class TokenAuthorizationMethod: TokenBasedAuthorizationMethod {
 final public class BearerAuthorizationMethod: TokenBasedAuthorizationMethod {
     
     public init() {
-        super.init(format: "Bearer %s")
+        super.init(format: "Bearer %@")
     }
     
 }
@@ -35,7 +35,7 @@ final public class BearerAuthorizationMethod: TokenBasedAuthorizationMethod {
 final public class JWTAuthorizationMethod: TokenBasedAuthorizationMethod {
     
     public init() {
-        super.init(format: "JWT %s")
+        super.init(format: "JWT %@")
     }
     
 }
