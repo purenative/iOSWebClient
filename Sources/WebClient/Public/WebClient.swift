@@ -106,10 +106,6 @@ private extension WebClient {
                          of request: URLRequest,
                          with requestParameters: RequestParameters) async throws -> RequestResponse {
         
-        guard response.isFailed else {
-            return response
-        }
-        
         guard let interceptor = self.interceptor else {
             return response
         }
@@ -121,7 +117,7 @@ private extension WebClient {
         switch interceptionResult {
         case .retryAfterAuthorizationTokenUpdates:
             if let accessTokenRefresher = self.accessTokenRefresher {
-                let success = await accessTokenRefresher.waitOrRefreshToken(for: self)
+                let success = await accessTokenRefresher.refreshToken(using: self)
                 
                 if success {
                     return try await self.request(with: requestParameters)
