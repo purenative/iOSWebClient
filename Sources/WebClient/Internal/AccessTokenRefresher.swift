@@ -1,15 +1,15 @@
-actor AccessTokenRefresher {
+import Foundation
+
+final class AccessTokenRefresher {
     
     typealias Completion = () -> Void
     
     private let accessTokenStorage: AuthorizationTokenStorage
     private let accessTokenProvider: AccessTokenProvider
     
-    private var refreshingCompletions = [Completion]()
-    
-    private(set) var lastRefreshingSuccessed: Bool = false
-    
-    private(set) var refreshing: Bool = false
+    private var refreshingLock = NSLock()
+    private var refreshing = false
+    private var refreshingContinuations = [CheckedContinuation<Bool, Never>]()
     
     public init(withStorage accessTokenStorage: AuthorizationTokenStorage,
                 andProvider accessTokenProvider: AccessTokenProvider) {
@@ -18,59 +18,65 @@ actor AccessTokenRefresher {
         self.accessTokenProvider = accessTokenProvider
     }
     
-    func waitOrRefreshToken(for webClient: WebClient) async -> Bool {
-        if refreshing {
-            await waitEndOfRefresh()
-        } else {
-            await refreshToken(for: webClient)
-            #if DEBUG
-            print("AccessTokenRefresher token refreshed:", lastRefreshingSuccessed)
-            #endif
+    func refreshToken(using webClient: WebClient) async -> Bool {
+        let refreshTask = refreshingLock.withLock {
+            if refreshing {
+                Task {
+                    await withCheckedContinuation { refreshContinuation in
+                        refreshingContinuations.append(refreshContinuation)
+                    }
+                }
+            } else {
+                Task {
+                    await refreshTokenWithContinuationResuming(using: webClient)
+                }
+            }
         }
-        return lastRefreshingSuccessed
+        
+        do {
+            return try await refreshTask.value
+        } catch {
+            return false
+        }
     }
     
-    private func refreshToken(for webClient: WebClient) async {
-        self.refreshing = true
+}
+
+private extension AccessTokenRefresher {
+    
+    private func refreshTokenWithContinuationResuming(using webClient: WebClient) async -> Bool {
+        refreshingLock.withLock { refreshing = true }
         
         let refreshToken = accessTokenStorage.getToken(byType: .refresh)
         let providingResult = await self.accessTokenProvider.provideToken(for: webClient,
-                                                                          refreshToken: refreshToken)
+                                                    refreshToken: refreshToken)
         
+        let successed: Bool
         switch providingResult {
         case let .successed(access, refresh):
             accessTokenStorage.update(accessToken: access,
                                       refreshToken: refresh)
-            lastRefreshingSuccessed = true
+            #if DEBUG
+            print("AccessTokenRefresher updates token pair")
+            #endif
+            successed = true
             
         case let .failed(error):
             #if DEBUG
             print("AccessTokenRefresher error:", error)
             #endif
-            lastRefreshingSuccessed = false
+            successed = false
         }
         
-        notifyWaitingIfNeeded()
-        self.refreshing = false
-    }
-    
-    private func waitEndOfRefresh() async {
-        return await withCheckedContinuation { continuation in
-            waitEndOfRefresh {
-                continuation.resume(returning: ())
+        refreshingLock.withLock {
+            for refreshContinuation in refreshingContinuations {
+                refreshContinuation.resume(returning: successed)
             }
+            refreshingContinuations = []
+            refreshing = false
         }
-    }
-    
-    private func waitEndOfRefresh(onComplete: @escaping () -> Void) {
-        refreshingCompletions.append(onComplete)
-    }
-    
-    private func notifyWaitingIfNeeded() {
-        while let waiting = refreshingCompletions.first {
-            waiting()
-            _ = refreshingCompletions.removeFirst()
-        }
+        
+        return successed
     }
     
 }
